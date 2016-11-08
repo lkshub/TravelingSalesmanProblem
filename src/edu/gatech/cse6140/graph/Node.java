@@ -32,7 +32,7 @@ public class Node {
 
     public Double getYCoordinate() { return coordinates.getY(); }
 
-    public Double calculateDistanceFromXYCoordinates(Double x, Double y) {
+    public Integer calculateDistanceFromXYCoordinates(Double x, Double y) {
         Double distance = 0.0;
 
         distance += Math.pow(this.getXCoordinate() - x, 2);
@@ -40,10 +40,12 @@ public class Node {
 
         distance = Math.sqrt(distance);
 
-        return distance;
+        distance += 0.5;
+
+        return distance.intValue();
     }
 
-    public Double calculateDistanceFromNode(Node otherNode) {
+    public Integer calculateDistanceFromNode(Node otherNode) {
         return calculateDistanceFromXYCoordinates(
                 otherNode.getXCoordinate(),
                 otherNode.getYCoordinate()
