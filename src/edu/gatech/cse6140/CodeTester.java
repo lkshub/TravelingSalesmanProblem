@@ -1,7 +1,7 @@
 package edu.gatech.cse6140;
 
 import edu.gatech.cse6140.io.InputOutputHandler;
-import edu.gatech.cse6140.tsp.graph.Node;
+import edu.gatech.cse6140.graph.Node;
 
 import java.util.ArrayList;
 

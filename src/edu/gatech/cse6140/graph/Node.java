@@ -1,4 +1,4 @@
-package edu.gatech.cse6140.tsp.graph;
+package edu.gatech.cse6140.graph;
 
 public class Node {
     private class Coordinates {

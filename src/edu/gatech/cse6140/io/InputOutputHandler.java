@@ -1,6 +1,6 @@
 package edu.gatech.cse6140.io;
 
-import edu.gatech.cse6140.tsp.graph.Node;
+import edu.gatech.cse6140.graph.Node;
 
 import java.io.*;
 import java.util.ArrayList;
