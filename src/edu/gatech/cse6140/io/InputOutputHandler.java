@@ -1,6 +1,7 @@
 package edu.gatech.cse6140.io;
 
 import edu.gatech.cse6140.graph.Node;
+import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class InputOutputHandler {
 
                 nodes.add(new Node(n++, d[0], Double.parseDouble(d[1]), Double.parseDouble(d[2])));
             }
+
+            reader.close(); in.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -39,5 +42,31 @@ public class InputOutputHandler {
         }
 
         return nodes;
+    }
+
+    public void putTravelingSalesmanTourInTourFile(TravelingSalesmanTour tour, String fileName) {
+        ArrayList<Node> nodes = tour.getTour();
+
+        nodes.add(nodes.get(0));
+
+        try {
+            PrintWriter out = new PrintWriter(basePath + "/" + fileName);
+
+            out.println(tour.getTourCost());
+
+            for (int i = 1; i < nodes.size(); i++) {
+                Node sourceNode = nodes.get(i - 1);
+                Node targetNode = nodes.get(i);
+
+                out.println(sourceNode.getId()
+                        +" "+targetNode.getId()
+                        +" "+targetNode.calculateDistanceFromNode(sourceNode)
+                );
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
