@@ -30,7 +30,7 @@ public class InputOutputHandler {
             while (!(line = reader.readLine()).equals("EOF")) {
                 String[] d = line.split(" ");
 
-                nodes.add(new Node(n++, d[0], Double.parseDouble(d[1]), Double.parseDouble(d[1])));
+                nodes.add(new Node(n++, d[0], Double.parseDouble(d[1]), Double.parseDouble(d[2])));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
