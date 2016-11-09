@@ -4,6 +4,7 @@ import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
+import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
 
 import java.util.ArrayList;
 
@@ -63,7 +64,21 @@ public class CodeTester {
         ioHandler.putTravelingSalesmanTourInTourFile(tourBoston, "Boston_test.tour");
     }
 
+    public static void testBranchAndBoundSolver() {
+        InputOutputHandler ioHandler = new InputOutputHandler(
+                "/Users/nilakshdas/Grad School/Fall16/cse6140/Project/gatech-cse6140-fa16-z-tsp/data"
+        );
+
+        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Cincinnati.tsp"));
+
+        BranchAndBoundSolver solver = new BranchAndBoundSolver(graph);
+
+        TravelingSalesmanTour tour = solver.solve();
+
+        System.out.println(tour.getTourCost());
+    }
+
     public static void main(String[] args) {
-        testTour();
+        testBranchAndBoundSolver();
     }
 }

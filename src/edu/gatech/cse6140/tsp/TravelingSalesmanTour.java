@@ -3,10 +3,12 @@ package edu.gatech.cse6140.tsp;
 import edu.gatech.cse6140.graph.Node;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class TravelingSalesmanTour {
     private Integer tourCost = 0;
     private ArrayList<Node> orderedNodes;
+    private HashSet<Integer> tourNodeIds = new HashSet<>();
 
     public TravelingSalesmanTour(ArrayList<Node> orderedNodes) {
         this.orderedNodes = new ArrayList<>();
@@ -18,6 +20,7 @@ public class TravelingSalesmanTour {
 
             for (Node node: orderedNodes) {
                 this.orderedNodes.add(node);
+                tourNodeIds.add(node.getId());
 
                 tourCost += lastNode.calculateDistanceFromNode(node);
 
@@ -44,9 +47,14 @@ public class TravelingSalesmanTour {
         }
 
         orderedNodes.add(node);
+        tourNodeIds.add(node.getId());
     }
 
     public Integer getTourCost() { return tourCost; }
 
     public ArrayList<Node> getTour() { return new ArrayList<>(orderedNodes); }
+
+    public Integer getTourSize() { return orderedNodes.size(); }
+
+    public Boolean containsNodeId(Integer nodeId) { return tourNodeIds.contains(nodeId); }
 }
