@@ -54,7 +54,7 @@ public class InputOutputHandler {
 
             out.println(tour.getTourCost());
 
-            for (int i = 1; i < nodes.size(); i++) {
+            for (Integer i = 1; i < nodes.size(); i++) {
                 Node sourceNode = nodes.get(i - 1);
                 Node targetNode = nodes.get(i);
 
