@@ -11,43 +11,64 @@ public class TravelingSalesmanTour {
     private HashSet<Integer> tourNodeIds = new HashSet<>();
 
     public TravelingSalesmanTour(ArrayList<Node> orderedNodes) {
-        this.orderedNodes = new ArrayList<>();
+        this();
 
-        if (orderedNodes.size() > 0) {
-            Node lastNode;
-
-            lastNode = orderedNodes.get(0);
-
-            for (Node node: orderedNodes) {
-                this.orderedNodes.add(node);
-                tourNodeIds.add(node.getId());
-
-                tourCost += lastNode.calculateDistanceFromNode(node);
-
-                lastNode = this.orderedNodes.get(this.orderedNodes.size() - 1);
-            }
-
-            tourCost += lastNode.calculateDistanceFromNode(this.orderedNodes.get(0));
-        }
-
+        for (Node node: orderedNodes)
+            addNode(node);
     }
 
-    public TravelingSalesmanTour() {
-        this(new ArrayList<Node>());
-    }
+    public TravelingSalesmanTour() { orderedNodes = new ArrayList<>(); }
 
-    public void addNode(Node node) {
-        if (orderedNodes.size() > 0) {
-            Node firstNode = orderedNodes.get(0);
-            Node lastNode = orderedNodes.get(orderedNodes.size() - 1);
+    public void addNode(Integer position, Node node) {
+        Integer n = orderedNodes.size();
 
-            tourCost -= lastNode.calculateDistanceFromNode(firstNode);
-            tourCost += lastNode.calculateDistanceFromNode(node);
-            tourCost += node.calculateDistanceFromNode(firstNode);
+        if (position < 0 || position > n)
+            return;
+
+        if (n > 0) {
+            Node headNode = position - 1 >= 0 ? orderedNodes.get(position - 1) : orderedNodes.get(n - 1);
+            Node tailNode = position < n ? orderedNodes.get(position) : orderedNodes.get(0);
+
+            tourCost -= headNode.calculateDistanceFromNode(tailNode);
+            tourCost += headNode.calculateDistanceFromNode(node);
+            tourCost += node.calculateDistanceFromNode(tailNode);
         }
 
-        orderedNodes.add(node);
+        orderedNodes.add(position, node);
         tourNodeIds.add(node.getId());
+    }
+
+    public void addNode(Node node) { addNode(orderedNodes.size(), node); }
+
+    public void removeNode(Integer position) {
+        Integer n = orderedNodes.size();
+        Node node = orderedNodes.get(position);
+
+        if (n > 0) {
+            Node headNode = position - 1 >= 0 ? orderedNodes.get(position - 1) : orderedNodes.get(n - 1);
+            Node tailNode = position + 1 < n ? orderedNodes.get(position + 1) : orderedNodes.get(0);
+
+            tourCost -= headNode.calculateDistanceFromNode(node);
+            tourCost -= node.calculateDistanceFromNode(tailNode);
+            tourCost += headNode.calculateDistanceFromNode(tailNode);
+        }
+
+        tourNodeIds.remove(node.getId());
+        orderedNodes.remove((int) position);
+    }
+
+    public void swapNodes(Integer position1, Integer position2) {
+        if ((int) position1 == position2)
+            return;
+
+        Node node1 = orderedNodes.get(position1);
+        Node node2 = orderedNodes.get(position2);
+
+        removeNode(position1);
+        addNode(position1, node2);
+
+        removeNode(position2);
+        addNode(position2, node1);
     }
 
     public Integer getTourCost() { return tourCost; }
@@ -57,4 +78,21 @@ public class TravelingSalesmanTour {
     public Integer getTourSize() { return orderedNodes.size(); }
 
     public Boolean containsNodeId(Integer nodeId) { return tourNodeIds.contains(nodeId); }
+
+    public String toString() {
+        if (orderedNodes.isEmpty())
+            return null;
+
+        if (orderedNodes.size() == 1)
+            return orderedNodes.get(0).getLabel();
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Node node: orderedNodes)
+            stringBuilder.append(node.getLabel()).append("-");
+
+        stringBuilder.append(orderedNodes.get(0).getLabel());
+
+        return stringBuilder.toString();
+    }
 }
