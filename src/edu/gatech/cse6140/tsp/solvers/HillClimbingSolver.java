@@ -31,9 +31,7 @@ public class HillClimbingSolver {
 		int numEvaluations = 1;
 				
 		EvaluationFunction nextEval = new EvaluationFunction();
-		
-		boolean makeMove = false;
-		
+				
 		while(numEvaluations < maxEvaluations){
 			ArrayList<Node> nextSolution = switchRandomCities(currSolution, currSolution.size()-1, currSolution.size());
 			
@@ -42,15 +40,13 @@ public class HillClimbingSolver {
 			if(nextEval.getPoints() < currEval.getPoints()){
 				currSolution = nextSolution;
 				currEval.recalculateEvaluation(currSolution);
-				makeMove = true;
 			}
 			
 			//randomized restart once local maximum is found
-			if(makeMove==true){
+			else{
 				seed = System.nanoTime();
-				Collections.shuffle(currSolution, new Random(seed));
-				currEval.recalculateEvaluation(currSolution);
-				makeMove = false;
+				nextSolution = currSolution;
+				Collections.shuffle(nextSolution, new Random(seed));
 			}
 			
 			numEvaluations++;
