@@ -34,4 +34,8 @@ public class Graph {
     public Integer getDistanceBetweenNodes(Integer nodeId1, Integer nodeId2) {
         return adjacencyMatrix[nodeId1][nodeId2];
     }
+    
+    public ArrayList<Node> getNodes(){
+    	return nodes;
+    }
 }
