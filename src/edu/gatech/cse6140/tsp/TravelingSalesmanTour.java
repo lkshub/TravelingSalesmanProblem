@@ -4,6 +4,7 @@ import edu.gatech.cse6140.graph.Node;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 public class TravelingSalesmanTour {
     private int tourCost = 0;
@@ -73,7 +74,17 @@ public class TravelingSalesmanTour {
 
     public int getTourCost() { return tourCost; }
 
+    public int getPathCost() {
+        return tourCost
+                - orderedNodes.get(0)
+                    .calculateDistanceFromNode(orderedNodes.get(getTourSize() - 1));
+    }
+
     public ArrayList<Node> getTour() { return new ArrayList<>(orderedNodes); }
+
+    public Set<Node> getNodes() { return new HashSet<>(orderedNodes); }
+
+    public Node getNodeAtPosition(int position) { return orderedNodes.get(position); }
 
     public int getTourSize() { return orderedNodes.size(); }
 

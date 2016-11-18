@@ -10,34 +10,51 @@ public class MinimumSpanningTree {
     private int size;
 
     private Map<Integer, Node> nodes;
+    private Map<Integer, Integer> posIds;
     private Map<Integer, List<Node>> neighbors;
 
     private WeightedQuickUnionUF components;
 
-    public MinimumSpanningTree(Graph graph) {
+    public MinimumSpanningTree(Collection<Node> nodes) {
         cost = 0;
         size = 0;
 
-        int n = graph.getNumNodes();
+        int n = nodes.size();
 
-        nodes = new HashMap<>();
+        this.nodes = new HashMap<>();
+        posIds = new HashMap<>();
         neighbors = new HashMap<>();
 
-        for (int i = 0; i < n; i++) {
-            nodes.put(i, graph.getNode(i));
-            neighbors.put(i, new ArrayList<>());
+        int i = 0;
+        for (Node node: nodes) {
+            this.nodes.put(node.getId(), node);
+            posIds.put(node.getId(), i++);
+            neighbors.put(node.getId(), new ArrayList<>());
         }
 
         components = new WeightedQuickUnionUF(n);
 
-        PriorityQueue<Edge> edges = new PriorityQueue<Edge>((n * (n - 1) / 2), new Comparator<Edge>() {
-            @Override
-            public int compare(Edge e1, Edge e2) { return e1.getWeight() - e2.getWeight(); }
-        });
+        PriorityQueue<Edge> edges = new PriorityQueue<>(Math.max((n * (n - 1) / 2), 1),
+                new Comparator<Edge>() {
+                    @Override
+                    public int compare(Edge e1, Edge e2) { return e1.getWeight() - e2.getWeight(); }
+                }
+        );
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < i; j++)
-                edges.offer(new Edge(graph.getNode(i), graph.getNode(j)));
+        Set<String> pairs = new HashSet<>();
+
+        for (Node node1: nodes) {
+            for (Node node2: nodes) {
+                if (node1.getId() == node2.getId())
+                    continue;
+
+                String nodePairString = createNodePairString(node1, node2);
+                if (!pairs.contains(nodePairString)) {
+                    edges.offer(new Edge(node1, node2));
+
+                    pairs.add(nodePairString);
+                }
+            }
         }
 
         while (size < n && edges.size() > 0) {
@@ -46,13 +63,31 @@ public class MinimumSpanningTree {
             if (!createsCycle(candidateEdge))
                 addEdge(candidateEdge);
         }
+
+//        for (Node node1: this.nodes.values()) {
+//            StringJoiner stringJoiner = new StringJoiner(", ");
+//
+//            for (Node node2: neighbors.get(node1.getId()))
+//                stringJoiner.add(((Integer)node2.getId()).toString());
+//
+//            System.out.println(node1.getId()+" "+stringJoiner);
+//        }
+    }
+
+    private String createNodePairString(Node node1, Node node2) {
+        StringJoiner stringJoiner = new StringJoiner("_");
+
+        stringJoiner.add(((Integer)Math.min(node1.getId(), node2.getId())).toString());
+        stringJoiner.add(((Integer)Math.max(node1.getId(), node2.getId())).toString());
+
+        return stringJoiner.toString();
     }
 
     private void addEdge(Node node1, Node node2) {
         neighbors.get(node1.getId()).add(node2);
         neighbors.get(node2.getId()).add(node1);
 
-        components.union(node1.getId(), node2.getId());
+        components.union(posIds.get(node1.getId()), posIds.get(node2.getId()));
 
         cost += node1.calculateDistanceFromNode(node2);
 
@@ -68,7 +103,7 @@ public class MinimumSpanningTree {
     private boolean createsCycle(Edge edge) {
         Node[] edgeNodes = edge.getNodes().toArray(new Node[2]);
 
-        return components.connected(edgeNodes[0].getId(), edgeNodes[1].getId());
+        return components.connected(posIds.get(edgeNodes[0].getId()), posIds.get(edgeNodes[1].getId()));
     }
 
     public int getCost() { return cost; }

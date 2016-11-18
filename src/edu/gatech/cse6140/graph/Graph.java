@@ -1,41 +1,33 @@
 package edu.gatech.cse6140.graph;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Graph {
-    private ArrayList<Node> nodes = new ArrayList<>();
-    private int[][] adjacencyMatrix;
+    private Map<Integer, Node> nodes;
+    private Map<Integer, Set<Integer>> edges;
 
-    public Graph(ArrayList<Node> nodes) {
-        int n = nodes.size();
+    public Graph() {
+        nodes = new HashMap<>();
+        edges = new HashMap<>();
+    }
 
-        for (int i = 0; i < n; i++) {
-            Node node = nodes.get(i);
+    public Graph(Collection<Node> nodes) {
+        this();
 
-            this.nodes.add(new Node(i, node.getLabel(),
-                    node.getXCoordinate(), node.getYCoordinate()
-            ));
-        }
+        for (Node node: nodes)
+            addNode(node);
+    }
 
-        adjacencyMatrix = new int[n][n];
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                adjacencyMatrix[i][j] = this.nodes.get(i)
-                        .calculateDistanceFromNode(this.nodes.get(j));
-            }
-        }
+    public void addNode(Node node) {
+        nodes.put(node.getId(), node);
+        edges.put(node.getId(), new HashSet<>());
     }
 
     public int getNumNodes() { return nodes.size(); }
 
     public Node getNode(int nodeId) { return nodes.get(nodeId); }
 
-    public int getDistanceBetweenNodes(int nodeId1, int nodeId2) {
-        return adjacencyMatrix[nodeId1][nodeId2];
-    }
-    
-    public ArrayList<Node> getNodes(){
-    	return nodes;
-    }
+    public Set<Node> getNodes() { return new HashSet<>(nodes.values()); }
+
+    public Edge getEdge(int nodeId1, int nodeId2) { return new Edge(getNode(nodeId1), getNode(nodeId2)); }
 }
