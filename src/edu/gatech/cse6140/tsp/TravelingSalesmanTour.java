@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class TravelingSalesmanTour {
-    private Integer tourCost = 0;
+    private int tourCost = 0;
     private ArrayList<Node> orderedNodes;
     private HashSet<Integer> tourNodeIds = new HashSet<>();
 
@@ -19,8 +19,8 @@ public class TravelingSalesmanTour {
 
     public TravelingSalesmanTour() { orderedNodes = new ArrayList<>(); }
 
-    public void addNode(Integer position, Node node) {
-        Integer n = orderedNodes.size();
+    public void addNode(int position, Node node) {
+        int n = orderedNodes.size();
 
         if (position < 0 || position > n)
             return;
@@ -40,8 +40,8 @@ public class TravelingSalesmanTour {
 
     public void addNode(Node node) { addNode(orderedNodes.size(), node); }
 
-    public void removeNode(Integer position) {
-        Integer n = orderedNodes.size();
+    public void removeNode(int position) {
+        int n = orderedNodes.size();
         Node node = orderedNodes.get(position);
 
         if (n > 0) {
@@ -57,7 +57,7 @@ public class TravelingSalesmanTour {
         orderedNodes.remove((int) position);
     }
 
-    public void swapNodes(Integer position1, Integer position2) {
+    public void swapNodes(int position1, int position2) {
         if ((int) position1 == position2)
             return;
 
@@ -71,13 +71,13 @@ public class TravelingSalesmanTour {
         addNode(position2, node1);
     }
 
-    public Integer getTourCost() { return tourCost; }
+    public int getTourCost() { return tourCost; }
 
     public ArrayList<Node> getTour() { return new ArrayList<>(orderedNodes); }
 
-    public Integer getTourSize() { return orderedNodes.size(); }
+    public int getTourSize() { return orderedNodes.size(); }
 
-    public Boolean containsNodeId(Integer nodeId) { return tourNodeIds.contains(nodeId); }
+    public Boolean containsNodeId(int nodeId) { return tourNodeIds.contains(nodeId); }
 
     public String toString() {
         if (orderedNodes.isEmpty())

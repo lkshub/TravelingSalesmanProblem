@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Graph {
     private ArrayList<Node> nodes = new ArrayList<>();
-    private Integer[][] adjacencyMatrix;
+    private int[][] adjacencyMatrix;
 
     public Graph(ArrayList<Node> nodes) {
         int n = nodes.size();
@@ -17,7 +17,7 @@ public class Graph {
             ));
         }
 
-        adjacencyMatrix = new Integer[n][n];
+        adjacencyMatrix = new int[n][n];
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -27,11 +27,11 @@ public class Graph {
         }
     }
 
-    public Integer getNumNodes() { return nodes.size(); }
+    public int getNumNodes() { return nodes.size(); }
 
-    public Node getNode(Integer nodeId) { return nodes.get(nodeId); }
+    public Node getNode(int nodeId) { return nodes.get(nodeId); }
 
-    public Integer getDistanceBetweenNodes(Integer nodeId1, Integer nodeId2) {
+    public int getDistanceBetweenNodes(int nodeId1, int nodeId2) {
         return adjacencyMatrix[nodeId1][nodeId2];
     }
     
