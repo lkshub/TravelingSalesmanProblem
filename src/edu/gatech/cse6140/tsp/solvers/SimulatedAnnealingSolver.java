@@ -10,14 +10,16 @@ import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver {
 	
 	private Random random;
+	private ArrayList<Node> nodes;
 	
 	/**
 	 * Constructor for SA solver
 	 * 
 	 * @param seed random seed
 	 */
-	public SimulatedAnnealingSolver(int seed) {
-		random = new Random(seed);
+	public SimulatedAnnealingSolver(int seed, ArrayList<Node> nodes) {
+		this.random = new Random(seed);
+		this.nodes = nodes;
 	}
 	
 	/**
@@ -38,10 +40,12 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	}
 
 	@Override
-	public TravelingSalesmanTour solve(int cutoffTimeInSeconds, ArrayList<Node> nodes) {
+	public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
 		//generate random starting point
-		Collections.shuffle(nodes, this.random);
-		TravelingSalesmanTour candidate = new TravelingSalesmanTour(nodes);
+		ArrayList<Node> copiedNodes = new ArrayList<Node>(this.nodes.size());
+		Collections.copy(copiedNodes, this.nodes);
+		Collections.shuffle(copiedNodes, this.random);
+		TravelingSalesmanTour candidate = new TravelingSalesmanTour(copiedNodes);
 		double T = 1;
 		for(int i = 1; i < 10000 && T != 0; i++) { //10,000 iterations for now
 			//generate neighbors
