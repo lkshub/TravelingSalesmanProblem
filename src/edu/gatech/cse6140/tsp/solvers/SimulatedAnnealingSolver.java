@@ -43,7 +43,6 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		Collections.shuffle(nodes, this.random);
 		TravelingSalesmanTour candidate = new TravelingSalesmanTour(nodes);
 		double T = 1;
-		int i = 0;
 		for(int i = 1; i < 10000 && T != 0; i++) { //10,000 iterations for now
 			//generate neighbors
 			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
