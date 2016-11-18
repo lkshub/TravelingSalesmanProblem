@@ -15,13 +15,13 @@ public class MinimumSpanningTreeApproximateSolverTest {
                 "/Users/nilakshdas/Grad School/Fall16/cse6140/Project/gatech-cse6140-fa16-z-tsp/data"
         );
 
-        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Roanoke.tsp"));
+        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Cincinnati.tsp"));
 
         TravelingSalesmanProblemSolver solver = new MinimumSpanningTreeApproximateSolver(graph);
 
         TravelingSalesmanTour tour = solver.solve(0);
 
-        System.out.println(tour);
-        System.out.println(tour.getTourCost());
+        System.out.println(tour); // 1-3-10-2-9-6-4-8-5-7-1 for Cincinnati
+        System.out.println(tour.getTourCost()); // 308737 for Cincinnati
     }
 }
