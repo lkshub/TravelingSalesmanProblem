@@ -40,7 +40,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	@Override
 	public TravelingSalesmanTour solve(int cutoffTimeInSeconds, ArrayList<Node> nodes) {
 		//generate random starting point
-		Collections.shuffle(nodes);
+		Collections.shuffle(nodes, this.random);
 		TravelingSalesmanTour candidate = new TravelingSalesmanTour(nodes);
 		double T = 1;
 		int i = 0;
@@ -53,7 +53,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 			int timeout = 500;
 			while(!foundNewCandidate && !(timeout == 0)) {
 				//pick neighbor at random
-				TravelingSalesmanTour possibleCandidate = neighbors.get(random.nextInt(neighbors.size()));
+				TravelingSalesmanTour possibleCandidate = neighbors.get(this.random.nextInt(neighbors.size()));
 				double deltaE = (double) possibleCandidate.getTourCost() - (double) candidate.getTourCost();
 				
 				if(deltaE > 0) { //if new tour is better, move to tour with probability 1
@@ -61,7 +61,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 					candidate = possibleCandidate;
 				} else { //else move with probability e^(deltaE/T)
 					double probability = Math.exp(deltaE/T);
-					double chance = random.nextDouble();
+					double chance = this.random.nextDouble();
 					if(chance >= probability) {
 						foundNewCandidate = true;
 						candidate = possibleCandidate;
