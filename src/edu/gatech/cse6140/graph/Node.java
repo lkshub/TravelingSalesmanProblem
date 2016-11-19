@@ -1,5 +1,7 @@
 package edu.gatech.cse6140.graph;
 
+import java.util.Comparator;
+
 public class Node {
     private class Coordinates {
         private Double x, y;
@@ -14,17 +16,26 @@ public class Node {
         public Double getY() { return y; }
     }
 
-    private Integer id;
+    private class NodeDistanceComparator implements Comparator<Node> {
+        public int compare(Node node1, Node node2) {
+            return Node.this.calculateDistanceFromNode(node1)
+                    - Node.this.calculateDistanceFromNode(node2);
+        }
+    }
+
+    private int id;
     private String label;
     private Coordinates coordinates;
+    private Comparator<Node> distanceComparator;
 
-    public Node(Integer id, String label, Double x, Double y) {
+    public Node(int id, String label, Double x, Double y) {
         this.id = id;
         this.label = label;
         this.coordinates = new Coordinates(x, y);
+        this.distanceComparator = new NodeDistanceComparator();
     }
 
-    public Integer getId() { return id; }
+    public int getId() { return id; }
 
     public String getLabel() {return  label;}
 
@@ -32,7 +43,7 @@ public class Node {
 
     public Double getYCoordinate() { return coordinates.getY(); }
 
-    public Integer calculateDistanceFromXYCoordinates(Double x, Double y) {
+    public int calculateDistanceFromXYCoordinates(Double x, Double y) {
         Double distance = 0.0;
 
         distance += Math.pow(this.getXCoordinate() - x, 2);
@@ -45,10 +56,12 @@ public class Node {
         return distance.intValue();
     }
 
-    public Integer calculateDistanceFromNode(Node otherNode) {
+    public int calculateDistanceFromNode(Node otherNode) {
         return calculateDistanceFromXYCoordinates(
                 otherNode.getXCoordinate(),
                 otherNode.getYCoordinate()
         );
     }
+
+    public Comparator<Node> getDistanceComparator() { return distanceComparator; }
 }
