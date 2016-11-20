@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
+import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
 public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver {
@@ -41,15 +43,19 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 
 	@Override
 	public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
+		System.out.println("Starting solver");
 		//generate random starting point
 		ArrayList<Node> copiedNodes = new ArrayList<Node>(this.nodes.size());
 		for(Node node: this.nodes) {
 			copiedNodes.add(node);
 		}
-		Collections.shuffle(copiedNodes, this.random);
-		TravelingSalesmanTour candidate = new TravelingSalesmanTour(copiedNodes);
+		NearestNeighborApproximateSolver constructionHeuristic = new NearestNeighborApproximateSolver(new Graph(copiedNodes));
+		//Collections.shuffle(copiedNodes, this.random);
+		TravelingSalesmanTour candidate = constructionHeuristic.solve(1000);
+		TravelingSalesmanTour bestSoFar = candidate;
 		double T = 1;
-		for(int i = 1; i < 1000000; i++) { //10,000 iterations for now
+		for(int i = 1; i < 10000; i++) { //10,000 iterations for now
+			System.out.println("Iteration " + i + ": T = " + T + " Best = " + bestSoFar.getTourCost() + " Candidate = " + candidate.getTourCost());
 			//generate neighbors
 			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
 			
@@ -61,7 +67,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 				TravelingSalesmanTour possibleCandidate = neighbors.get(this.random.nextInt(neighbors.size()));
 				double deltaE = (double) possibleCandidate.getTourCost() - (double) candidate.getTourCost();
 				
-				if(deltaE > 0) { //if new tour is better, move to tour with probability 1
+				if(deltaE < 0) { //if new tour is better, move to tour with probability 1
 					foundNewCandidate = true;
 					candidate = possibleCandidate;
 				} else { //else move with probability e^(deltaE/T)
@@ -75,10 +81,14 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 				timeout--;
 			}
 			
+			if(candidate.getTourCost() < bestSoFar.getTourCost()) {
+				bestSoFar = candidate;
+			}
+			
 			T = T * 0.95; //update temperature value
 		}
 		
-		return candidate; //return final value
+		return bestSoFar; //return best value
 	}
 
 }
