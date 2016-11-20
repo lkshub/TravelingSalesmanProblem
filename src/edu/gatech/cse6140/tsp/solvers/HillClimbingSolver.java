@@ -20,7 +20,7 @@ public class HillClimbingSolver {
 		
 		long seed = System.nanoTime();
 		
-		ArrayList<Node> currSolution = graphBoston.getNodes();
+		ArrayList<Node> currSolution = new ArrayList<>(graphBoston.getNodes());
 		
 		Collections.shuffle(currSolution, new Random(seed));
 		

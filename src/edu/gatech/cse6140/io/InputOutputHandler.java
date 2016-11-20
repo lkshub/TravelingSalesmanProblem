@@ -20,13 +20,13 @@ public class InputOutputHandler {
             InputStream in = new FileInputStream(new File(basePath + "/" + fileName));
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-            for (Integer i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 reader.readLine();
             }
 
             String line;
 
-            Integer n = 0;
+            int n = 0;
 
             while (!(line = reader.readLine()).equals("EOF")) {
                 String[] d = line.split(" ");
@@ -54,7 +54,7 @@ public class InputOutputHandler {
 
             out.println(tour.getTourCost());
 
-            for (Integer i = 1; i < nodes.size(); i++) {
+            for (int i = 1; i < nodes.size(); i++) {
                 Node sourceNode = nodes.get(i - 1);
                 Node targetNode = nodes.get(i);
 
