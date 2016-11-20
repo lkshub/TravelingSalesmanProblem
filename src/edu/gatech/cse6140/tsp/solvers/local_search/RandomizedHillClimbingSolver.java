@@ -7,11 +7,10 @@ import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
-public class HillClimbingSolver implements TravelingSalesmanProblemSolver {
+public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
     private TravelingSalesmanTour bestTour;
     private int bestCost = Integer.MAX_VALUE;
@@ -23,7 +22,7 @@ public class HillClimbingSolver implements TravelingSalesmanProblemSolver {
     private long startTime;
     private long cutoffTimeInSeconds;
 
-    public HillClimbingSolver(Graph graph) {
+    public RandomizedHillClimbingSolver(Graph graph) {
         this.graph = graph;
 
         randomSeed = System.currentTimeMillis();
@@ -42,7 +41,7 @@ public class HillClimbingSolver implements TravelingSalesmanProblemSolver {
         }
     }
 
-    public HillClimbingSolver setRandomSeed(long randomSeed) {
+    public RandomizedHillClimbingSolver setRandomSeed(long randomSeed) {
         this.randomSeed = randomSeed;
         random = new Random(randomSeed);
 
