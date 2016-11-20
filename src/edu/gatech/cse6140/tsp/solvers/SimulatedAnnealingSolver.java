@@ -43,11 +43,13 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
 		//generate random starting point
 		ArrayList<Node> copiedNodes = new ArrayList<Node>(this.nodes.size());
-		Collections.copy(copiedNodes, this.nodes);
+		for(Node node: this.nodes) {
+			copiedNodes.add(node);
+		}
 		Collections.shuffle(copiedNodes, this.random);
 		TravelingSalesmanTour candidate = new TravelingSalesmanTour(copiedNodes);
 		double T = 1;
-		for(int i = 1; i < 10000 && T != 0; i++) { //10,000 iterations for now
+		for(int i = 1; i < 1000000; i++) { //10,000 iterations for now
 			//generate neighbors
 			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
 			
@@ -73,7 +75,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 				timeout--;
 			}
 			
-			T = T * 0.98; //update temperature value
+			T = T * 0.95; //update temperature value
 		}
 		
 		return candidate; //return final value
