@@ -6,6 +6,7 @@ import edu.gatech.cse6140.graph.MinimumSpanningTree;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,8 +30,8 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
-            bestTour = tour;
-            bestCost = tour.getTourCost();
+            bestTour = new TravelingSalesmanTour(tour.getTour());
+            bestCost = bestTour.getTourCost();
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
         }
     }
@@ -74,6 +75,8 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
             PriorityQueue<Node> candidateNodes = new PriorityQueue<>(remainingNodes.size(),
                     tailNode.getDistanceComparator());
 
+
+
             for (Node candidateNode: remainingNodes)
                 candidateNodes.offer(candidateNode);
 
@@ -94,7 +97,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
 
         TravelingSalesmanTour tour = new TravelingSalesmanTour();
 
-        tour.addNode(graph.getNode(0));
+        tour.addNode(new NearestNeighborApproximateSolver(graph).solve(0).getNodeAtPosition(0));
 
         solve(tour);
 
