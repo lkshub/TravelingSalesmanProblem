@@ -64,10 +64,17 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
             if (numIterationsUnchanged > n*n) {
 //                System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": RESTART");
 
-                ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
-                Collections.shuffle(nodes, random);
+                //ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
+                //Collections.shuffle(nodes, random);
 
-                candidateTour = new TravelingSalesmanTour(nodes);
+                candidateTour = new TravelingSalesmanTour(candidateTour.getTour());
+                int i = random.nextInt(n), j = random.nextInt(n);
+                while (i == j) {
+                    i = random.nextInt(n);
+                    j = random.nextInt(n);
+                }
+                candidateTour = new TravelingSalesmanTour(candidateTour.shuffleNodesBetweenIndex(i, j, random));
+                
 
                 numIterationsUnchanged = 0;
             }

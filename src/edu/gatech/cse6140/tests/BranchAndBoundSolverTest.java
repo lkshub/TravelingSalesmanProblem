@@ -18,8 +18,12 @@ public class BranchAndBoundSolverTest {
 
         Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Toronto.tsp"));
 
-        TravelingSalesmanTour tour = new BranchAndBoundSolver(graph).solve(600);
-
+        BranchAndBoundSolver bnb_solver = new BranchAndBoundSolver(graph);
+        
+        TravelingSalesmanTour tour = bnb_solver.solve(10);
+        
+        bnb_solver.getTraceFile().createTraceFile("Toronto", "BnB", 10, -1);
+        
         System.out.println(tour);
     }
 }

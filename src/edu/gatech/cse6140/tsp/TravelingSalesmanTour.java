@@ -5,6 +5,7 @@ import edu.gatech.cse6140.graph.Node;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.Collections;
 
@@ -82,6 +83,20 @@ public class TravelingSalesmanTour {
 
         removeNode(position2);
         addNode(position2, node1);
+    }
+    
+    public ArrayList<Node> shuffleNodesBetweenIndex(int pos1, int pos2, Random random) {
+    	ArrayList<Node> partition = new ArrayList<Node>();
+    	int start = Integer.min(pos1, pos2);
+    	int end = Integer.max(pos1, pos2);
+    	for(int i = start; i < end; i++) {
+    		partition.add(this.orderedNodes.get(i));
+    	}
+    	Collections.shuffle(partition, random);
+    	for(int i = start; i < end; i++) {
+    		this.orderedNodes.set(i, partition.get(i - start));
+    	}
+    	return this.orderedNodes;
     }
 
     public int getTourCost() { return tourCost; }

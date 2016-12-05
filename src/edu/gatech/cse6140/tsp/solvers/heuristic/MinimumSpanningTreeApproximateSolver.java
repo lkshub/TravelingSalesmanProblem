@@ -1,6 +1,7 @@
 package edu.gatech.cse6140.tsp.solvers.heuristic;
 
 import edu.gatech.cse6140.graph.Graph;
+import edu.gatech.cse6140.io.*;
 import edu.gatech.cse6140.graph.MinimumSpanningTree;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
@@ -11,10 +12,12 @@ import java.util.Stack;
 
 public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
+    private TraceFile trace;
 
-    public MinimumSpanningTreeApproximateSolver(Graph graph) { this.graph = graph; }
+    public MinimumSpanningTreeApproximateSolver(Graph graph) { this.graph = graph; trace = new TraceFile();}
 
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
+    	long startTime = System.currentTimeMillis();
         TravelingSalesmanTour tour = new TravelingSalesmanTour();
 
         MinimumSpanningTree minimumSpanningTree = new MinimumSpanningTree(graph.getNodes());
@@ -35,7 +38,11 @@ public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanPr
                     nodeStack.push(neighbor);
             }
         }
-
+        trace.addEntry(tour.getTourCost(), ((System.currentTimeMillis() - startTime) / 1000));
         return tour;
+    }
+    
+    public TraceFile getTraceFile(){
+    	return trace;
     }
 }
