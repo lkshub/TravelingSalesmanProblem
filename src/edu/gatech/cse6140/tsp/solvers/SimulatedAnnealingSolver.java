@@ -12,6 +12,7 @@ import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver {
 	
 	private Random random;
+	private Graph graph;
 	private ArrayList<Node> nodes;
 	private long startTime;
 	private long cutoffTimeInSeconds;
@@ -26,6 +27,20 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		this.random = new Random(seed);
 		this.nodes = nodes;
 		trace = new TraceFile();
+	}
+
+	public SimulatedAnnealingSolver(Graph graph, int seed) {
+		this(seed, new ArrayList<Node>(graph.getNodes()));
+	}
+
+	public SimulatedAnnealingSolver(Graph graph) {
+		this((int)(System.currentTimeMillis() / 1000), new ArrayList<Node>(graph.getNodes()));
+	}
+
+	public SimulatedAnnealingSolver setRandomSeed(long randomSeed) {
+		this.random = new Random(randomSeed);
+
+        return this;
 	}
 	
 	/**
