@@ -16,8 +16,10 @@ public class BranchAndBoundSolverTest {
     public void testSolve() throws Exception {
         InputOutputHandler ioHandler = new InputOutputHandler("./data");
 
-        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Roanoke.tsp"));
+        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Toronto.tsp"));
 
         TravelingSalesmanTour tour = new BranchAndBoundSolver(graph).solve(600);
+
+        System.out.println(tour);
     }
 }

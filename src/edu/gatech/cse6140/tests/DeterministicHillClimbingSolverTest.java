@@ -18,7 +18,7 @@ public class DeterministicHillClimbingSolverTest {
     public void testDeterministicHillClimbingSolver() {
         InputOutputHandler ioHandler = new InputOutputHandler("./data");
 
-        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Roanoke.tsp"));
+        Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Toronto.tsp"));
 
         TravelingSalesmanTour tour = new DeterministicHillClimbingSolver(graph).solve(600);
     }
