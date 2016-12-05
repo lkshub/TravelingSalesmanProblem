@@ -38,7 +38,7 @@ public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanPr
                     nodeStack.push(neighbor);
             }
         }
-        trace.addEntry(tour.getTourCost(), ((System.currentTimeMillis() - startTime) / 1000));
+        trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
         return tour;
     }
     

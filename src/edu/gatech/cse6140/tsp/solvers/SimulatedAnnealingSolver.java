@@ -5,6 +5,7 @@ import java.util.Random;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
+import edu.gatech.cse6140.io.TraceFile;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
@@ -14,6 +15,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	private ArrayList<Node> nodes;
 	private long startTime;
 	private long cutoffTimeInSeconds;
+	private TraceFile trace;
 	
 	/**
 	 * Constructor for SA solver
@@ -23,6 +25,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	public SimulatedAnnealingSolver(int seed, ArrayList<Node> nodes) {
 		this.random = new Random(seed);
 		this.nodes = nodes;
+		trace = new TraceFile();
 	}
 	
 	/**
@@ -89,6 +92,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 			}
 			
 			if(candidate.getTourCost() < bestSoFar.getTourCost()) {
+				trace.addEntry(candidate.getTourCost(), (double)(System.currentTimeMillis() - startTime) / (double)1000);
 				bestSoFar = candidate;
 			}
 			
@@ -97,6 +101,10 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		}
 		
 		return bestSoFar; //return best value
+	}
+	
+	public TraceFile getTraceFile(){
+		return trace;
 	}
 
 }

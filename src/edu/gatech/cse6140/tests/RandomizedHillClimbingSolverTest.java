@@ -2,6 +2,7 @@ package edu.gatech.cse6140.tests;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
+import edu.gatech.cse6140.io.TraceFile;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
 import edu.gatech.cse6140.tsp.solvers.local_search.RandomizedHillClimbingSolver;
@@ -14,9 +15,14 @@ public class RandomizedHillClimbingSolverTest {
         InputOutputHandler ioHandler = new InputOutputHandler("./data");
 
         Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Roanoke.tsp"));
+        
+        RandomizedHillClimbingSolver rhc = new RandomizedHillClimbingSolver(graph);
 
-        TravelingSalesmanTour tour = new RandomizedHillClimbingSolver(graph)
+        TravelingSalesmanTour tour = rhc
                 .setRandomSeed(67)
-                .solve(400, new BranchAndBoundSolver(graph).solve(200));
+                .solve(10, new BranchAndBoundSolver(graph).solve(10));
+        
+        TraceFile trace = rhc.getTraceFile();
+        trace.createTraceFile("Roanoke", "RandomizedHC", 10, 67);
     }
 }
