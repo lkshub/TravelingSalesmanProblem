@@ -13,8 +13,11 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import edu.gatech.cse6140.io.*;
+
 public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
+    private TraceFile trace;
     private TravelingSalesmanTour bestTour;
     private int bestCost = Integer.MAX_VALUE;
 
@@ -22,7 +25,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private long startTime;
     private long cutoffTimeInSeconds;
 
-    public BranchAndBoundSolver(Graph graph) { this.graph = graph; }
+    public BranchAndBoundSolver(Graph graph) { this.graph = graph; trace = new TraceFile();}
 
     private long getTimeRemainingInSeconds() {
         return cutoffTimeInSeconds - ((System.currentTimeMillis() - startTime) / 1000);
@@ -30,6 +33,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
+        	trace.addEntry(tour.getTourCost(), ((System.currentTimeMillis() - startTime) / 1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
@@ -102,7 +106,11 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         solve(tour);
 
         System.out.println(numIterations+": "+ bestTour.getTourCost()+", "+bestTour);
-
+                
         return bestTour;
+    }
+    
+    public TraceFile getTraceFile(){
+    	return trace;
     }
 }
