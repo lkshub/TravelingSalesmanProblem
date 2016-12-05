@@ -1,7 +1,6 @@
 package edu.gatech.cse6140.tsp.solvers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import edu.gatech.cse6140.graph.Graph;
@@ -13,6 +12,8 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	
 	private Random random;
 	private ArrayList<Node> nodes;
+	private long startTime;
+	private long cutoffTimeInSeconds;
 	
 	/**
 	 * Constructor for SA solver
@@ -40,9 +41,15 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		}
 		return neighbors;
 	}
+	
+	private long getTimeRemainingInSeconds() {
+        return cutoffTimeInSeconds - ((System.currentTimeMillis() - startTime) / 1000);
+    }
 
 	@Override
 	public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
+		this.startTime = System.currentTimeMillis();
+		this.cutoffTimeInSeconds = (long) cutoffTimeInSeconds;
 		System.out.println("Starting solver");
 		//generate random starting point
 		ArrayList<Node> copiedNodes = new ArrayList<Node>(this.nodes.size());
@@ -50,11 +57,11 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 			copiedNodes.add(node);
 		}
 		NearestNeighborApproximateSolver constructionHeuristic = new NearestNeighborApproximateSolver(new Graph(copiedNodes));
-		//Collections.shuffle(copiedNodes, this.random);
 		TravelingSalesmanTour candidate = constructionHeuristic.solve(1000);
 		TravelingSalesmanTour bestSoFar = candidate;
 		double T = 1;
-		for(int i = 1; i < 10000; i++) { //10,000 iterations for now
+		int i = 1;
+		while(getTimeRemainingInSeconds() > 2) {
 			System.out.println("Iteration " + i + ": T = " + T + " Best = " + bestSoFar.getTourCost() + " Candidate = " + candidate.getTourCost());
 			//generate neighbors
 			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
@@ -86,6 +93,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 			}
 			
 			T = T * 0.95; //update temperature value
+			i++;
 		}
 		
 		return bestSoFar; //return best value
