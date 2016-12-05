@@ -33,7 +33,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
-        	trace.addEntry(tour.getTourCost(), ((System.currentTimeMillis() - startTime) / 1000));
+        	trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);

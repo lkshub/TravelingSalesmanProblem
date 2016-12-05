@@ -19,7 +19,7 @@ public class TraceFile {
 		timeCutoffs.add(time);
 	}
 	
-	public void createTraceFile(String instance, String method, double cutoff, int seed){
+	public void createTraceFile(String instance, String method, int cutoff, int seed){
 		String fileName;
 		if(seed!=-1){
 			fileName = instance + "_" + method + "_" + cutoff + "_" + seed + ".trace";

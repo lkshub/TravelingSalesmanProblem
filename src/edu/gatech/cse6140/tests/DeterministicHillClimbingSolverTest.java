@@ -2,6 +2,7 @@ package edu.gatech.cse6140.tests;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
+import edu.gatech.cse6140.io.TraceFile;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 import edu.gatech.cse6140.tsp.solvers.local_search.DeterministicHillClimbingSolver;
@@ -19,7 +20,13 @@ public class DeterministicHillClimbingSolverTest {
         InputOutputHandler ioHandler = new InputOutputHandler("./data");
 
         Graph graph = new Graph(ioHandler.getNodesFromTSPFile("Toronto.tsp"));
+        
+        DeterministicHillClimbingSolver hc = new DeterministicHillClimbingSolver(graph);
 
-        TravelingSalesmanTour tour = new DeterministicHillClimbingSolver(graph).solve(600);
+        TravelingSalesmanTour tour = hc.solve(10);
+        
+        TraceFile trace = hc.getTraceFile();
+        
+        trace.createTraceFile("Toronto", "DeterministicHC", 10, -1);
     }
 }

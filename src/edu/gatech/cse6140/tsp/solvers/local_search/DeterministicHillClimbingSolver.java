@@ -3,6 +3,7 @@ package edu.gatech.cse6140.tsp.solvers.local_search;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
+import edu.gatech.cse6140.io.TraceFile;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
@@ -48,13 +49,15 @@ public class DeterministicHillClimbingSolver implements TravelingSalesmanProblem
     private int bestCost = Integer.MAX_VALUE;
     private int numIterations = 0;
     private long startTime;
-
+    private TraceFile trace;
+    
     private long cutoffTimeInSeconds;
 
     public TabuTourMemory tabuTourMemory;
 
     public DeterministicHillClimbingSolver(Graph graph) {
         this.graph = graph;
+        trace = new TraceFile();
 
         tabuTourMemory = new TabuTourMemory(1000);
     }
@@ -65,6 +68,7 @@ public class DeterministicHillClimbingSolver implements TravelingSalesmanProblem
 
     private void setBetterTourAsBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
+        	trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
             // System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
@@ -126,5 +130,9 @@ public class DeterministicHillClimbingSolver implements TravelingSalesmanProblem
         ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
 
         return solve(cutoffTimeInSeconds, new NearestNeighborApproximateSolver(graph).solve(0));
+    }
+    
+    public TraceFile getTraceFile(){
+    	return trace;
     }
 }

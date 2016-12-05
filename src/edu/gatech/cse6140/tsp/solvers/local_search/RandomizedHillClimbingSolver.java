@@ -3,6 +3,7 @@ package edu.gatech.cse6140.tsp.solvers.local_search;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
+import edu.gatech.cse6140.io.TraceFile;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 
@@ -21,9 +22,11 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
     private int numIterations = 0;
     private long startTime;
     private long cutoffTimeInSeconds;
+    private TraceFile trace;
 
     public RandomizedHillClimbingSolver(Graph graph) {
         this.graph = graph;
+        trace = new TraceFile();
 
         randomSeed = System.currentTimeMillis();
         random = new Random(randomSeed);
@@ -35,6 +38,7 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
+        	trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
@@ -108,5 +112,9 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
         Collections.shuffle(nodes, random);
 
         return solve(cutoffTimeInSeconds, new TravelingSalesmanTour(nodes));
+    }
+    
+    public TraceFile getTraceFile(){
+    	return trace;
     }
 }
