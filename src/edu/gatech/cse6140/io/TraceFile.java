@@ -1,11 +1,13 @@
 package edu.gatech.cse6140.io;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class TraceFile {
 	private ArrayList<Integer> optimalLengths;
 	private ArrayList<Double> timeCutoffs;
+	private DecimalFormat df = new DecimalFormat("0.00");
 	
 	public TraceFile(){
 		optimalLengths = new ArrayList<Integer>();
@@ -29,7 +31,7 @@ public class TraceFile {
 			PrintWriter trace = new PrintWriter("./output/" + fileName);
 			
 			for(int i = 0; i < timeCutoffs.size(); i ++){
-				trace.println(timeCutoffs.get(i) + ", " + optimalLengths.get(i));
+				trace.println(df.format(timeCutoffs.get(i)) + ", " + optimalLengths.get(i));
 			}
 			trace.close();
 		} catch (IOException e) {
