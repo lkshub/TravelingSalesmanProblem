@@ -102,6 +102,22 @@ public class TravelingSalesmanTour {
         tourCost = new TravelingSalesmanTour(this.orderedNodes).getTourCost();
     }
 
+    public void swap2OPT(int pos1, int pos2) {
+        int a = Integer.min(pos1, pos2), b = Integer.max(pos1, pos2);
+
+        ArrayList<Node> partition = new ArrayList<>();
+
+        for (int i = a; i < b; i++)
+            partition.add(this.orderedNodes.get(i));
+
+        Collections.reverse(partition);
+
+        for(int i = a; i < b; i++)
+            this.orderedNodes.set(i, partition.get(i - a));
+
+        tourCost = new TravelingSalesmanTour(this.orderedNodes).getTourCost();
+    }
+
     public int getTourCost() { return tourCost; }
 
     public int getPathCost() {

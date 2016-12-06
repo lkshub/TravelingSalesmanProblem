@@ -44,5 +44,13 @@ public class BestHeuristicApproximateSolver implements TravelingSalesmanProblemS
         return bestTour;
     }
 
+    public TravelingSalesmanTour solve(int cutoffTimeInSeconds, TravelingSalesmanTour tour) {
+        startTime = System.currentTimeMillis();
+
+        setBetterTourAsBestTour(tour);
+
+        return solve(cutoffTimeInSeconds);
+    }
+
     public Trace getTrace() { return trace; }
 }
