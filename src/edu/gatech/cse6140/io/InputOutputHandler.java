@@ -85,7 +85,7 @@ public class InputOutputHandler {
             if (!fileReference.endsWith(".trace"))
                 fileReference = fileReference.concat(".trace");
 
-            DecimalFormat df = new DecimalFormat("0.00");
+            DecimalFormat df = new DecimalFormat("0.000");
 
             PrintWriter out = new PrintWriter(basePath + "/" + fileReference);
 

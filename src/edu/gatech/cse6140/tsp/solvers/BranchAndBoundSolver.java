@@ -110,7 +110,5 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         return bestTour;
     }
     
-    public Trace getTrace(){
-    	return trace;
-    }
+    public Trace getTrace(){ return trace; }
 }

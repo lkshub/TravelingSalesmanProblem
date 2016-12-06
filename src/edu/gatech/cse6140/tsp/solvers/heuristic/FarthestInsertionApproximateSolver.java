@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FarthestInsertionSolver implements TravelingSalesmanProblemSolver {
+public class FarthestInsertionApproximateSolver implements TravelingSalesmanProblemSolver {
 	private Graph graph;
 	private Trace trace;
 	
-	public FarthestInsertionSolver(Graph graph){
+	public FarthestInsertionApproximateSolver(Graph graph){
 		this.graph = graph;
 		trace = new Trace();
 	}

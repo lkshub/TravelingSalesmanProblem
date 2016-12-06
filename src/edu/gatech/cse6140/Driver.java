@@ -8,7 +8,7 @@ import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
 import edu.gatech.cse6140.tsp.solvers.local_search.SimulatedAnnealingSolver;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
-import edu.gatech.cse6140.tsp.solvers.heuristic.FarthestInsertionSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.FarthestInsertionApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.local_search.DeterministicHillClimbingSolver;
@@ -76,7 +76,7 @@ public class Driver {
         algorithms.put("MSTApprox", new MinimumSpanningTreeApproximateSolver(graph));
         algorithms.put("Heur", new NearestNeighborApproximateSolver(graph));
         algorithms.put("Heur1", new MinimumSpanningTreeApproximateSolver(graph));
-        algorithms.put("Heur2", new FarthestInsertionSolver(graph));
+        algorithms.put("Heur2", new FarthestInsertionApproximateSolver(graph));
         algorithms.put("Heur3", new NearestNeighborApproximateSolver(graph));
         algorithms.put("LS1", new RandomizedHillClimbingSolver(graph).setRandomSeed(seed));
         algorithms.put("LS2", new SimulatedAnnealingSolver(graph).setRandomSeed(seed));
@@ -89,6 +89,11 @@ public class Driver {
 
         StringJoiner solutionFileNameJoiner = new StringJoiner("_");
         StringJoiner traceFileNameJoiner = new StringJoiner("_");
+
+        if (cmd.hasOption("debug")) {
+            solutionFileNameJoiner.add("debug");
+            traceFileNameJoiner.add("debug");
+        }
 
         solutionFileNameJoiner.add(instance);
         traceFileNameJoiner.add(instance);

@@ -3,14 +3,12 @@ package edu.gatech.cse6140.tests;
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
-import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
-import edu.gatech.cse6140.tsp.solvers.heuristic.FarthestInsertionSolver;
-import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.FarthestInsertionApproximateSolver;
 
 import org.junit.Test;
 
-public class FarthestInsertionSolverTest {
+public class FarthestInsertionApproximateSolverTest {
 
 	@Test
 	public void testFarthestInsertionSolver(){
@@ -25,7 +23,7 @@ public class FarthestInsertionSolverTest {
         	
 	        Graph graph = new Graph(ioHandler.getNodesFromTSPFile(city));
 	        
-	        TravelingSalesmanProblemSolver solver = new FarthestInsertionSolver(graph);
+	        TravelingSalesmanProblemSolver solver = new FarthestInsertionApproximateSolver(graph);
 	        
 	        TravelingSalesmanTour tour = solver.solve(600);
 	        

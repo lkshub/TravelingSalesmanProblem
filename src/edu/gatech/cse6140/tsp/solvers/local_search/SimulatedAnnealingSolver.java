@@ -7,42 +7,43 @@ import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.io.Trace;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.BestHeuristicApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
 public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver {
+
+    private Graph graph;
+    private Trace trace;
+    private long startTime;
+    private long cutoffTimeInSeconds;
+    private Random random;
+    private TravelingSalesmanTour bestTour;
+    private int bestCost = Integer.MAX_VALUE;
 	
-	private Random random;
-	private Graph graph;
-	private ArrayList<Node> nodes;
-	private long startTime;
-	private long cutoffTimeInSeconds;
-	private Trace trace;
-	
-	/**
-	 * Constructor for SA solver
-	 * 
-	 * @param seed random seed
-	 */
-	public SimulatedAnnealingSolver(long seed, ArrayList<Node> nodes) {
-		this.random = new Random(seed);
-		this.nodes = nodes;
-		trace = new Trace();
+	public SimulatedAnnealingSolver(Graph graph, long seed) {
+        this.graph = graph;
+        trace = new Trace();
+        random = new Random(seed);
 	}
 
-	public SimulatedAnnealingSolver(Graph graph, int seed) {
-		this(seed, new ArrayList<Node>(graph.getNodes()));
-	}
-
-	public SimulatedAnnealingSolver(Graph graph) {
-		this(System.currentTimeMillis(), new ArrayList<Node>(graph.getNodes()));
-	}
+	public SimulatedAnnealingSolver(Graph graph) { this(graph, System.currentTimeMillis()); }
 
 	public SimulatedAnnealingSolver setRandomSeed(long randomSeed) {
 		this.random = new Random(randomSeed);
 
         return this;
 	}
+
+    private void setBetterTourAsBestTour(TravelingSalesmanTour tour) {
+        if (tour.getTourCost() < bestCost) {
+            bestTour = new TravelingSalesmanTour(tour.getTour());
+            bestCost = bestTour.getTourCost();
+            trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
+
+             System.out.println(bestCost);
+        }
+    }
 	
 	/**
 	 * returns the neighborhood of size n-1 by deep copy, then perform each adjacent swap
@@ -52,13 +53,16 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	 */
 	private ArrayList<TravelingSalesmanTour> getNeighbors(TravelingSalesmanTour tour) {
 		int neighborhoodSize = tour.getTourSize() - 1;
-		ArrayList<TravelingSalesmanTour> neighbors = new ArrayList<TravelingSalesmanTour>(neighborhoodSize);
-		for(int i = 0; i < neighborhoodSize; i++) {
+
+        ArrayList<TravelingSalesmanTour> neighbors = new ArrayList<TravelingSalesmanTour>(neighborhoodSize);
+
+        for(int i = 0; i < neighborhoodSize; i++) {
 			TravelingSalesmanTour newNeighbor = new TravelingSalesmanTour(tour.getTour());
 			newNeighbor.swapNodes(i, i + 1); //get every adjacent swap
 			neighbors.add(newNeighbor);
 		}
-		return neighbors;
+
+        return neighbors;
 	}
 	
 	private long getTimeRemainingInSeconds() {
@@ -69,58 +73,50 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
 		this.startTime = System.currentTimeMillis();
 		this.cutoffTimeInSeconds = (long) cutoffTimeInSeconds;
-		System.out.println("Starting solver");
-		//generate random starting point
-		ArrayList<Node> copiedNodes = new ArrayList<Node>(this.nodes.size());
-		for(Node node: this.nodes) {
-			copiedNodes.add(node);
-		}
-		NearestNeighborApproximateSolver constructionHeuristic = new NearestNeighborApproximateSolver(new Graph(copiedNodes));
-		TravelingSalesmanTour candidate = constructionHeuristic.solve(1000);
-		TravelingSalesmanTour bestSoFar = candidate;
-		double T = 1;
-		int i = 1;
+
+		TravelingSalesmanTour candidateTour = new BestHeuristicApproximateSolver(graph).solve(cutoffTimeInSeconds);
+
+        setBetterTourAsBestTour(candidateTour);
+
+        double T = 1;
+
 		while(getTimeRemainingInSeconds() > 2) {
-			// System.out.println("Iteration " + i + ": T = " + T + " Best = " + bestSoFar.getTourCost() + " Candidate = " + candidate.getTourCost());
-			//generate neighbors
-			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
+			// generate neighbors
+			ArrayList<TravelingSalesmanTour> neighbors = getNeighbors(candidateTour);
 			
-			//choose a candidate and move there
-			boolean foundNewCandidate = false;
-			int timeout = 500;
-			while(!foundNewCandidate && !(timeout == 0)) {
-				//pick neighbor at random
-				TravelingSalesmanTour possibleCandidate = neighbors.get(this.random.nextInt(neighbors.size()));
-				double deltaE = (double) possibleCandidate.getTourCost() - (double) candidate.getTourCost();
+			// choose a candidate and move there
+            int timeout = 500;
+            boolean foundNewCandidate = false;
+
+            while (!foundNewCandidate && !(timeout == 0)) {
+				// pick neighbor at random
+                TravelingSalesmanTour possibleCandidate = neighbors.get(this.random.nextInt(neighbors.size()));
+
+                double deltaE = (double) possibleCandidate.getTourCost() - (double) candidateTour.getTourCost();
 				
-				if(deltaE < 0) { //if new tour is better, move to tour with probability 1
+				if (deltaE < 0) { // if new tour is better, move to tour with probability 1
 					foundNewCandidate = true;
-					candidate = possibleCandidate;
-				} else { //else move with probability e^(deltaE/T)
-					double probability = Math.exp(deltaE/T);
+                    candidateTour = possibleCandidate;
+				} else { // else move with probability e^(deltaE/T)
+					double probability = Math.exp(deltaE / T);
 					double chance = this.random.nextDouble();
-					if(chance >= probability) {
+
+                    if (chance >= probability) {
 						foundNewCandidate = true;
-						candidate = possibleCandidate;
+						candidateTour = possibleCandidate;
 					}
 				}
+
 				timeout--;
 			}
 			
-			if(candidate.getTourCost() < bestSoFar.getTourCost()) {
-				trace.addEntry((double)(System.currentTimeMillis() - startTime) / (double)1000, candidate.getTourCost());
-				bestSoFar = candidate;
-			}
+			setBetterTourAsBestTour(candidateTour);
 			
 			T = T * 0.95; //update temperature value
-			i++;
 		}
 		
-		return bestSoFar; //return best value
+		return bestTour;
 	}
 	
-	public Trace getTrace(){
-		return trace;
-	}
-
+	public Trace getTrace(){ return trace; }
 }
