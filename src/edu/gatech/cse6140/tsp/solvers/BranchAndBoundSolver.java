@@ -1,15 +1,12 @@
 package edu.gatech.cse6140.tsp.solvers;
 
-import edu.gatech.cse6140.graph.Edge;
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.MinimumSpanningTree;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
-import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -17,7 +14,7 @@ import edu.gatech.cse6140.io.*;
 
 public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
-    private TraceFile trace;
+    private Trace trace;
     private TravelingSalesmanTour bestTour;
     private int bestCost = Integer.MAX_VALUE;
 
@@ -25,7 +22,10 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private long startTime;
     private long cutoffTimeInSeconds;
 
-    public BranchAndBoundSolver(Graph graph) { this.graph = graph; trace = new TraceFile();}
+    public BranchAndBoundSolver(Graph graph) {
+        this.graph = graph;
+        trace = new Trace();
+    }
 
     private long getTimeRemainingInSeconds() {
         return cutoffTimeInSeconds - ((System.currentTimeMillis() - startTime) / 1000);
@@ -33,9 +33,9 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
-        	trace.addEntry(tour.getTourCost(), ((System.currentTimeMillis() - startTime) / 1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
+            trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
         }
     }
@@ -110,7 +110,5 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         return bestTour;
     }
     
-    public TraceFile getTraceFile(){
-    	return trace;
-    }
+    public Trace getTrace(){ return trace; }
 }

@@ -17,3 +17,11 @@ hs_err_pid*
 .idea/
 *.iml
 /bin/
+
+*.properties
+
+gatech-cse6140-fa16-z-tsp.xml
+
+*.sol
+
+*.trace

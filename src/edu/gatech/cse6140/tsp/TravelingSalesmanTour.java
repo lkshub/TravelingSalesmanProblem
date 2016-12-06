@@ -85,18 +85,21 @@ public class TravelingSalesmanTour {
         addNode(position2, node1);
     }
     
-    public ArrayList<Node> shuffleNodesBetweenIndex(int pos1, int pos2, Random random) {
-    	ArrayList<Node> partition = new ArrayList<Node>();
-    	int start = Integer.min(pos1, pos2);
+    public void shuffleNodesBetweenIndex(int pos1, int pos2, Random random) {
+    	ArrayList<Node> partition = new ArrayList<>();
+
+        int start = Integer.min(pos1, pos2);
     	int end = Integer.max(pos1, pos2);
-    	for(int i = start; i < end; i++) {
-    		partition.add(this.orderedNodes.get(i));
-    	}
-    	Collections.shuffle(partition, random);
-    	for(int i = start; i < end; i++) {
-    		this.orderedNodes.set(i, partition.get(i - start));
-    	}
-    	return this.orderedNodes;
+
+        for(int i = start; i < end; i++)
+            partition.add(this.orderedNodes.get(i));
+
+        Collections.shuffle(partition, random);
+
+        for(int i = start; i < end; i++)
+            this.orderedNodes.set(i, partition.get(i - start));
+
+        tourCost = new TravelingSalesmanTour(this.orderedNodes).getTourCost();
     }
 
     public int getTourCost() { return tourCost; }
