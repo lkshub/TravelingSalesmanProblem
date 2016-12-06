@@ -1,20 +1,20 @@
 package edu.gatech.cse6140.tsp.solvers;
 
-import edu.gatech.cse6140.graph.Edge;
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.MinimumSpanningTree;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
-import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import edu.gatech.cse6140.io.*;
+
 public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
+    private Trace trace;
     private TravelingSalesmanTour bestTour;
     private int bestCost = Integer.MAX_VALUE;
 
@@ -22,7 +22,10 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
     private long startTime;
     private long cutoffTimeInSeconds;
 
-    public BranchAndBoundSolver(Graph graph) { this.graph = graph; }
+    public BranchAndBoundSolver(Graph graph) {
+        this.graph = graph;
+        trace = new Trace();
+    }
 
     private long getTimeRemainingInSeconds() {
         return cutoffTimeInSeconds - ((System.currentTimeMillis() - startTime) / 1000);
@@ -32,6 +35,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         if (tour.getTourCost() < bestCost) {
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
+            trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
         }
     }
@@ -102,7 +106,9 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         solve(tour);
 
         System.out.println(numIterations+": "+ bestTour.getTourCost()+", "+bestTour);
-
+                
         return bestTour;
     }
+    
+    public Trace getTrace(){ return trace; }
 }

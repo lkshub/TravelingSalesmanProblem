@@ -3,10 +3,23 @@ package edu.gatech.cse6140.tsp;
 import edu.gatech.cse6140.graph.Node;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.Collections;
 
 public class TravelingSalesmanTour {
+	
+	private class NodeToTourComparator implements Comparator<Node>{
+		@Override
+		public int compare(Node node1, Node node2){//the distance is defined as max(node.distanceTo(any node in tour))
+			Node farthestNodeInTour1 = Collections.max(getNodes(),node1.getDistanceComparator());
+			Node farthestNodeInTour2 = Collections.max(getNodes(),node2.getDistanceComparator());
+			return farthestNodeInTour1.calculateDistanceFromNode(node1) - farthestNodeInTour2.calculateDistanceFromNode(node2);
+			}
+	}
+		
     private int tourCost = 0;
     private ArrayList<Node> orderedNodes;
     private HashSet<Integer> tourNodeIds = new HashSet<>();
@@ -71,6 +84,23 @@ public class TravelingSalesmanTour {
         removeNode(position2);
         addNode(position2, node1);
     }
+    
+    public void shuffleNodesBetweenIndex(int pos1, int pos2, Random random) {
+    	ArrayList<Node> partition = new ArrayList<>();
+
+        int start = Integer.min(pos1, pos2);
+    	int end = Integer.max(pos1, pos2);
+
+        for(int i = start; i < end; i++)
+            partition.add(this.orderedNodes.get(i));
+
+        Collections.shuffle(partition, random);
+
+        for(int i = start; i < end; i++)
+            this.orderedNodes.set(i, partition.get(i - start));
+
+        tourCost = new TravelingSalesmanTour(this.orderedNodes).getTourCost();
+    }
 
     public int getTourCost() { return tourCost; }
 
@@ -105,5 +135,8 @@ public class TravelingSalesmanTour {
         stringBuilder.append(orderedNodes.get(0).getLabel());
 
         return stringBuilder.toString();
+    }
+    public Comparator<Node> getNodeToTourComparator(){
+    	return new NodeToTourComparator();
     }
 }

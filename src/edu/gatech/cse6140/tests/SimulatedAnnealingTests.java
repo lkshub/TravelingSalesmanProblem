@@ -1,15 +1,14 @@
 package edu.gatech.cse6140.tests;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 
 import org.junit.Test;
 
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.io.InputOutputHandler;
+import edu.gatech.cse6140.io.Trace;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
-import edu.gatech.cse6140.tsp.solvers.SimulatedAnnealingSolver;
+import edu.gatech.cse6140.tsp.solvers.local_search.SimulatedAnnealingSolver;
 
 public class SimulatedAnnealingTests {
 
@@ -20,9 +19,11 @@ public class SimulatedAnnealingTests {
         );
 		ArrayList<Node> nodes = ioHandler.getNodesFromTSPFile("Boston.tsp");
 		SimulatedAnnealingSolver solver = new SimulatedAnnealingSolver(1, nodes);
-		TravelingSalesmanTour tour = solver.solve(0);
+		TravelingSalesmanTour tour = solver.solve(10);
 		System.out.println(tour);
 		System.out.println(tour.getTourCost());
+		
+		Trace trace = solver.getTrace();
 	}
 
 }
