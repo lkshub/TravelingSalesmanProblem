@@ -18,17 +18,20 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
     private long randomSeed;
     private Random random;
 
-    private int numIterations = 0;
     private long startTime;
     private long cutoffTimeInSeconds;
     private Trace trace;
 
-    public RandomizedHillClimbingSolver(Graph graph) {
+    public RandomizedHillClimbingSolver(Graph graph, long randomSeed) {
         this.graph = graph;
         trace = new Trace();
 
-        randomSeed = System.currentTimeMillis();
+        this.randomSeed = randomSeed;
         random = new Random(randomSeed);
+    }
+
+    public RandomizedHillClimbingSolver(Graph graph) {
+        this(graph, System.currentTimeMillis());
     }
 
     private long getTimeRemainingInSeconds() {
@@ -41,7 +44,7 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
             bestCost = bestTour.getTourCost();
             trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
 
-            // System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
+            System.out.println(bestCost);
         }
     }
 
@@ -63,8 +66,6 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
         int numIterationsUnchanged = 0;
 
         while (getTimeRemainingInSeconds() > 2) {
-            numIterations++;
-
             if (numIterationsUnchanged > 2 * n * n) {
                 // ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
                 // Collections.shuffle(nodes, random);
@@ -79,12 +80,12 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
                 //     j = random.nextInt(n);
                 // }
 
-                System.out.println("RESTARTING: "+candidateTour.getTourCost());
+                // System.out.println("RESTARTING: "+candidateTour.getTourCost());
 
                 candidateTour.shuffleNodesBetweenIndex(i, i + 6, random);
                 evaluateAndSetBestTour(candidateTour);
 
-                System.out.println("RESTARTED : "+candidateTour.getTourCost());
+                // System.out.println("RESTARTED : "+candidateTour.getTourCost());
 
                 numIterationsUnchanged = 0;
             }
@@ -92,12 +93,11 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
             TravelingSalesmanTour newCandidateTour = new TravelingSalesmanTour(candidateTour.getTour());
 
             int i = random.nextInt(n), j = random.nextInt(n);
-            while (i == j) {
-                i = random.nextInt(n);
+            while (i == j)
                 j = random.nextInt(n);
-            }
 
-            newCandidateTour.swapNodes(i, j);
+            // newCandidateTour.swapNodes(i, j);
+            newCandidateTour.swap2OPT(i, j);
 
             if (newCandidateTour.getTourCost() < candidateTour.getTourCost()) {
                 evaluateAndSetBestTour(newCandidateTour);
@@ -114,12 +114,14 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
     }
 
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
-        // ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
-        // Collections.shuffle(nodes, random);
+        startTime = System.currentTimeMillis();
+        this.cutoffTimeInSeconds = cutoffTimeInSeconds;
 
-        return solve(cutoffTimeInSeconds, new BestHeuristicApproximateSolver(graph).solve(cutoffTimeInSeconds));
+        TravelingSalesmanTour tour = new BestHeuristicApproximateSolver(graph).solve(cutoffTimeInSeconds);
+
+        return solve((int)getTimeRemainingInSeconds(), tour);
     }
-    
+
     public Trace getTrace(){
     	return trace;
     }

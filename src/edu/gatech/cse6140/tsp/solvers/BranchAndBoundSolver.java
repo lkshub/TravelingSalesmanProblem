@@ -4,6 +4,7 @@ import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.MinimumSpanningTree;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
+import edu.gatech.cse6140.tsp.solvers.heuristic.BestHeuristicApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.Collection;
@@ -36,7 +37,8 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
             trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
-            System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
+
+            System.out.println(bestCost);
         }
     }
 
@@ -63,7 +65,7 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         if (getTimeRemainingInSeconds() < 2)
             return;
 
-        numIterations++;
+        // numIterations++;
 
         Set<Node> remainingNodes = graph.getNodes();
         remainingNodes.removeAll(candidateTour.getNodes());
@@ -95,18 +97,31 @@ public class BranchAndBoundSolver implements TravelingSalesmanProblemSolver {
         }
     }
 
+    public TravelingSalesmanTour solve(int cutoffTimeInSeconds, TravelingSalesmanTour tour) {
+        startTime = System.currentTimeMillis();
+        this.cutoffTimeInSeconds = (long) cutoffTimeInSeconds;
+
+        evaluateAndSetBestTour(tour);
+
+        TravelingSalesmanTour newTour = new TravelingSalesmanTour();
+
+        newTour.addNode(new NearestNeighborApproximateSolver(graph).solve(0).getNodeAtPosition(0));
+
+        solve(newTour);
+
+        // System.out.println(numIterations+": "+ bestTour.getTourCost()+", "+bestTour);
+                
+        return bestTour;
+    }
+
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
         startTime = System.currentTimeMillis();
         this.cutoffTimeInSeconds = (long) cutoffTimeInSeconds;
 
-        TravelingSalesmanTour tour = new TravelingSalesmanTour();
+        TravelingSalesmanTour tour = new BestHeuristicApproximateSolver(graph).solve(cutoffTimeInSeconds);
 
-        tour.addNode(new NearestNeighborApproximateSolver(graph).solve(0).getNodeAtPosition(0));
+        solve((int)getTimeRemainingInSeconds(), tour);
 
-        solve(tour);
-
-        System.out.println(numIterations+": "+ bestTour.getTourCost()+", "+bestTour);
-                
         return bestTour;
     }
     
