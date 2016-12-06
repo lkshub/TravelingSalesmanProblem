@@ -21,3 +21,7 @@ hs_err_pid*
 *.properties
 
 gatech-cse6140-fa16-z-tsp.xml
+
+*.sol
+
+*.trace
