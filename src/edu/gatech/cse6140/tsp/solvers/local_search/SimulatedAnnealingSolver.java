@@ -44,7 +44,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
             bestCost = bestTour.getTourCost();
             trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
 
-            System.out.println(bestCost);
+            // System.out.println(bestCost);
         }
     }
 
