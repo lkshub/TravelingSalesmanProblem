@@ -1,5 +1,6 @@
 package edu.gatech.cse6140;
 
+import edu.gatech.cse6140.tsp.solvers.HybridSolver;
 import org.apache.commons.cli.*;
 
 import edu.gatech.cse6140.graph.Graph;
@@ -81,6 +82,7 @@ public class Driver {
         algorithms.put("LS1", new RandomizedHillClimbingSolver(graph).setRandomSeed(seed));
         algorithms.put("LS2", new SimulatedAnnealingSolver(graph).setRandomSeed(seed));
         algorithms.put("LS3", new DeterministicHillClimbingSolver(graph));
+        algorithms.put("Hyb", new HybridSolver(graph).setRandomSeed(seed));
 
 
         TravelingSalesmanProblemSolver solver = algorithms.get(algorithm);
@@ -91,6 +93,8 @@ public class Driver {
         StringJoiner traceFileNameJoiner = new StringJoiner("_");
 
         if (cmd.hasOption("debug")) {
+            Long currentTime = System.currentTimeMillis();
+
             solutionFileNameJoiner.add("debug");
             traceFileNameJoiner.add("debug");
         }
@@ -104,14 +108,16 @@ public class Driver {
         solutionFileNameJoiner.add(cutoffTimeInSeconds.toString());
         traceFileNameJoiner.add(cutoffTimeInSeconds.toString());
 
-        if (algorithm.equals("LS1") || algorithm.equals("LS2")) {
+        if (algorithm.equals("LS1") || algorithm.equals("LS2") || algorithm.equals("Hyb")) {
             solutionFileNameJoiner.add(seed.toString());
             traceFileNameJoiner.add(seed.toString());
         }
 
         if (cmd.hasOption("debug")) {
-            solutionFileNameJoiner.add(((Long)System.currentTimeMillis()).toString());
-            traceFileNameJoiner.add(((Long)System.currentTimeMillis()).toString());
+            Long currentTime = System.currentTimeMillis();
+
+            solutionFileNameJoiner.add(currentTime.toString());
+            traceFileNameJoiner.add(currentTime.toString());
         }
 
         outputHandler.putTravelingSalesmanTourInSolFile(tour, solutionFileNameJoiner.toString());

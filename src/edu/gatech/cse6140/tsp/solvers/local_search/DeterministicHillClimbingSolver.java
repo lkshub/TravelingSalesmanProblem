@@ -6,6 +6,7 @@ import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.io.Trace;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.BestHeuristicApproximateSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.*;
@@ -126,9 +127,12 @@ public class DeterministicHillClimbingSolver implements TravelingSalesmanProblem
     }
 
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
-        ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
+        startTime = System.currentTimeMillis();
+        this.cutoffTimeInSeconds = cutoffTimeInSeconds;
 
-        return solve(cutoffTimeInSeconds, new NearestNeighborApproximateSolver(graph).solve(0));
+        TravelingSalesmanTour tour = new BestHeuristicApproximateSolver(graph).solve(cutoffTimeInSeconds);
+
+        return solve((int)getTimeRemainingInSeconds(), tour);
     }
     
     public Trace getTrace(){
