@@ -7,17 +7,17 @@ import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanProblemSolver {
     private Graph graph;
-    private TraceFile trace;
+    private Trace trace;
 
-    public MinimumSpanningTreeApproximateSolver(Graph graph) { this.graph = graph; trace = new TraceFile();}
+    public MinimumSpanningTreeApproximateSolver(Graph graph) { this.graph = graph; trace = new Trace();}
 
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
     	long startTime = System.currentTimeMillis();
+
         TravelingSalesmanTour tour = new TravelingSalesmanTour();
 
         MinimumSpanningTree minimumSpanningTree = new MinimumSpanningTree(graph.getNodes());
@@ -26,7 +26,6 @@ public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanPr
 
         if (graph.getNumNodes() > 0)
             nodeStack.push(graph.getNode(0));
-//            nodeStack.push(graph.getNodes().iterator().next());
 
         while (!nodeStack.isEmpty()) {
             Node node = nodeStack.pop();
@@ -38,11 +37,11 @@ public class MinimumSpanningTreeApproximateSolver implements TravelingSalesmanPr
                     nodeStack.push(neighbor);
             }
         }
-        trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
+
+        trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
+
         return tour;
     }
     
-    public TraceFile getTraceFile(){
-    	return trace;
-    }
+    public Trace getTrace(){ return trace; }
 }

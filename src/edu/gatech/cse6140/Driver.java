@@ -6,7 +6,7 @@ import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
-import edu.gatech.cse6140.tsp.solvers.SimulatedAnnealingSolver;
+import edu.gatech.cse6140.tsp.solvers.local_search.SimulatedAnnealingSolver;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.FarthestInsertionSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.MinimumSpanningTreeApproximateSolver;
@@ -15,6 +15,7 @@ import edu.gatech.cse6140.tsp.solvers.local_search.DeterministicHillClimbingSolv
 import edu.gatech.cse6140.tsp.solvers.local_search.RandomizedHillClimbingSolver;
 
 import java.util.HashMap;
+import java.util.StringJoiner;
 
 public class Driver {
     public static void main(String[] args) {
@@ -36,6 +37,10 @@ public class Driver {
         inputSeed.setRequired(false);
         options.addOption(inputSeed);
 
+        Option inputDebug = new Option("d", "debug", false, "debug mode");
+        inputDebug.setRequired(false);
+        options.addOption(inputDebug);
+
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
@@ -52,17 +57,21 @@ public class Driver {
 
         String filename = cmd.getOptionValue("inst");
         String algorithm = cmd.getOptionValue("alg");
-        int cutoffTimeInSeconds = Integer.parseInt(cmd.getOptionValue("time"));
-        long seed = Long.parseLong(cmd.getOptionValue(
+        Integer cutoffTimeInSeconds = Integer.parseInt(cmd.getOptionValue("time"));
+        Long seed = Long.parseLong(cmd.getOptionValue(
                 "seed", ((Long)(System.currentTimeMillis())).toString())
         );
 
-        InputOutputHandler ioHandler = new InputOutputHandler("../data");
+        String instance = filename;
+        if (instance.endsWith(".tsp"))
+            instance = instance.substring(0, instance.length() - 4);
 
-        Graph graph = new Graph(ioHandler.getNodesFromTSPFile(filename));
+        InputOutputHandler inputHandler = new InputOutputHandler("../data");
+        InputOutputHandler outputHandler = new InputOutputHandler("../output");
+
+        Graph graph = new Graph(inputHandler.getNodesFromTSPFile(filename));
 
         HashMap<String, TravelingSalesmanProblemSolver> algorithms = new HashMap<>();
-
         algorithms.put("BnB", new BranchAndBoundSolver(graph));
         algorithms.put("MSTApprox", new MinimumSpanningTreeApproximateSolver(graph));
         algorithms.put("Heur", new NearestNeighborApproximateSolver(graph));
@@ -77,5 +86,30 @@ public class Driver {
         TravelingSalesmanProblemSolver solver = algorithms.get(algorithm);
 
         TravelingSalesmanTour tour = solver.solve(cutoffTimeInSeconds);
+
+        StringJoiner solutionFileNameJoiner = new StringJoiner("_");
+        StringJoiner traceFileNameJoiner = new StringJoiner("_");
+
+        solutionFileNameJoiner.add(instance);
+        traceFileNameJoiner.add(instance);
+
+        solutionFileNameJoiner.add(algorithm);
+        traceFileNameJoiner.add(algorithm);
+
+        solutionFileNameJoiner.add(cutoffTimeInSeconds.toString());
+        traceFileNameJoiner.add(cutoffTimeInSeconds.toString());
+
+        if (algorithm.equals("LS1") || algorithm.equals("LS2")) {
+            solutionFileNameJoiner.add(seed.toString());
+            traceFileNameJoiner.add(seed.toString());
+        }
+
+        if (cmd.hasOption("debug")) {
+            solutionFileNameJoiner.add(((Long)System.currentTimeMillis()).toString());
+            traceFileNameJoiner.add(((Long)System.currentTimeMillis()).toString());
+        }
+
+        outputHandler.putTravelingSalesmanTourInSolFile(tour, solutionFileNameJoiner.toString());
+        outputHandler.putTraceInTraceFile(solver.getTrace(), traceFileNameJoiner.toString());
     }
 }

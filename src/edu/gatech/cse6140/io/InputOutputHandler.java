@@ -4,6 +4,7 @@ import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class InputOutputHandler {
@@ -13,11 +14,14 @@ public class InputOutputHandler {
         this.basePath = basePath;
     }
 
-    public ArrayList<Node> getNodesFromTSPFile(String fileName) {
+    public ArrayList<Node> getNodesFromTSPFile(String fileReference) {
         ArrayList<Node> nodes = new ArrayList<>();
 
         try {
-            InputStream in = new FileInputStream(new File(basePath + "/" + fileName));
+            if (!fileReference.endsWith(".tsp"))
+                fileReference = fileReference.concat(".tsp");
+
+            InputStream in = new FileInputStream(new File(basePath + "/" + fileReference));
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
             for (int i = 0; i < 5; i++) {
@@ -44,13 +48,16 @@ public class InputOutputHandler {
         return nodes;
     }
 
-    public void putTravelingSalesmanTourInTourFile(TravelingSalesmanTour tour, String fileName) {
+    public void putTravelingSalesmanTourInSolFile(TravelingSalesmanTour tour, String fileReference) {
         ArrayList<Node> nodes = tour.getTour();
 
         nodes.add(nodes.get(0));
 
         try {
-            PrintWriter out = new PrintWriter(basePath + "/" + fileName);
+            if (!fileReference.endsWith(".sol"))
+                fileReference = fileReference.concat(".sol");
+
+            PrintWriter out = new PrintWriter(basePath + "/" + fileReference);
 
             out.println(tour.getTourCost());
 
@@ -63,6 +70,27 @@ public class InputOutputHandler {
                         +" "+targetNode.calculateDistanceFromNode(sourceNode)
                 );
             }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void putTraceInTraceFile(Trace trace, String fileReference) {
+        ArrayList<Double> traceTimes = trace.getTraceTimes();
+        ArrayList<Integer> traceValues = trace.getTraceValues();
+
+        try {
+            if (!fileReference.endsWith(".trace"))
+                fileReference = fileReference.concat(".trace");
+
+            DecimalFormat df = new DecimalFormat("0.00");
+
+            PrintWriter out = new PrintWriter(basePath + "/" + fileReference);
+
+            for (int i = 0; i < traceTimes.size(); i++)
+                out.println(df.format(traceTimes.get(i)) + ", " + traceValues.get(i));
 
             out.close();
         } catch (FileNotFoundException e) {

@@ -1,11 +1,12 @@
-package edu.gatech.cse6140.tsp.solvers;
+package edu.gatech.cse6140.tsp.solvers.local_search;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
-import edu.gatech.cse6140.io.TraceFile;
+import edu.gatech.cse6140.io.Trace;
+import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
 import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 
@@ -16,17 +17,17 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	private ArrayList<Node> nodes;
 	private long startTime;
 	private long cutoffTimeInSeconds;
-	private TraceFile trace;
+	private Trace trace;
 	
 	/**
 	 * Constructor for SA solver
 	 * 
 	 * @param seed random seed
 	 */
-	public SimulatedAnnealingSolver(int seed, ArrayList<Node> nodes) {
+	public SimulatedAnnealingSolver(long seed, ArrayList<Node> nodes) {
 		this.random = new Random(seed);
 		this.nodes = nodes;
-		trace = new TraceFile();
+		trace = new Trace();
 	}
 
 	public SimulatedAnnealingSolver(Graph graph, int seed) {
@@ -34,7 +35,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 	}
 
 	public SimulatedAnnealingSolver(Graph graph) {
-		this((int)(System.currentTimeMillis() / 1000), new ArrayList<Node>(graph.getNodes()));
+		this(System.currentTimeMillis(), new ArrayList<Node>(graph.getNodes()));
 	}
 
 	public SimulatedAnnealingSolver setRandomSeed(long randomSeed) {
@@ -80,7 +81,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		double T = 1;
 		int i = 1;
 		while(getTimeRemainingInSeconds() > 2) {
-			System.out.println("Iteration " + i + ": T = " + T + " Best = " + bestSoFar.getTourCost() + " Candidate = " + candidate.getTourCost());
+			// System.out.println("Iteration " + i + ": T = " + T + " Best = " + bestSoFar.getTourCost() + " Candidate = " + candidate.getTourCost());
 			//generate neighbors
 			ArrayList<TravelingSalesmanTour> neighbors = this.getNeighbors(candidate);
 			
@@ -107,7 +108,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 			}
 			
 			if(candidate.getTourCost() < bestSoFar.getTourCost()) {
-				trace.addEntry(candidate.getTourCost(), (double)(System.currentTimeMillis() - startTime) / (double)1000);
+				trace.addEntry((double)(System.currentTimeMillis() - startTime) / (double)1000, candidate.getTourCost());
 				bestSoFar = candidate;
 			}
 			
@@ -118,7 +119,7 @@ public class SimulatedAnnealingSolver implements TravelingSalesmanProblemSolver 
 		return bestSoFar; //return best value
 	}
 	
-	public TraceFile getTraceFile(){
+	public Trace getTrace(){
 		return trace;
 	}
 

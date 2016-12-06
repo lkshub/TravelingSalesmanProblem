@@ -22,8 +22,6 @@ public class BranchAndBoundSolverTest {
         
         TravelingSalesmanTour tour = bnb_solver.solve(10);
         
-        bnb_solver.getTraceFile().createTraceFile("Toronto", "BnB", 10, -1);
-        
         System.out.println(tour);
     }
 }

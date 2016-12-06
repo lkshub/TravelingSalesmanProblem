@@ -3,9 +3,10 @@ package edu.gatech.cse6140.tsp.solvers.local_search;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
-import edu.gatech.cse6140.io.TraceFile;
+import edu.gatech.cse6140.io.Trace;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.TravelingSalesmanProblemSolver;
+import edu.gatech.cse6140.tsp.solvers.heuristic.NearestNeighborApproximateSolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,11 +23,11 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
     private int numIterations = 0;
     private long startTime;
     private long cutoffTimeInSeconds;
-    private TraceFile trace;
+    private Trace trace;
 
     public RandomizedHillClimbingSolver(Graph graph) {
         this.graph = graph;
-        trace = new TraceFile();
+        trace = new Trace();
 
         randomSeed = System.currentTimeMillis();
         random = new Random(randomSeed);
@@ -38,9 +39,9 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
 
     private void evaluateAndSetBestTour(TravelingSalesmanTour tour) {
         if (tour.getTourCost() < bestCost) {
-        	trace.addEntry(tour.getTourCost(), ((double)(System.currentTimeMillis() - startTime) / (double)1000));
             bestTour = new TravelingSalesmanTour(tour.getTour());
             bestCost = bestTour.getTourCost();
+            trace.addEntry(((double)(System.currentTimeMillis() - startTime) / (double)1000), tour.getTourCost());
             System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": "+bestCost+", "+tour);
         }
     }
@@ -66,10 +67,8 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
             numIterations++;
 
             if (numIterationsUnchanged > n*n) {
-//                System.out.println(getTimeRemainingInSeconds()+" - "+numIterations+": RESTART");
-
-                //ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
-                //Collections.shuffle(nodes, random);
+                // ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
+                // Collections.shuffle(nodes, random);
 
                 candidateTour = new TravelingSalesmanTour(candidateTour.getTour());
                 int i = random.nextInt(n), j = random.nextInt(n);
@@ -108,13 +107,13 @@ public class RandomizedHillClimbingSolver implements TravelingSalesmanProblemSol
     }
 
     public TravelingSalesmanTour solve(int cutoffTimeInSeconds) {
-        ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
-        Collections.shuffle(nodes, random);
+        // ArrayList<Node> nodes = new ArrayList<>(graph.getNodes());
+        // Collections.shuffle(nodes, random);
 
-        return solve(cutoffTimeInSeconds, new TravelingSalesmanTour(nodes));
+        return solve(cutoffTimeInSeconds, new NearestNeighborApproximateSolver(graph).solve(cutoffTimeInSeconds));
     }
     
-    public TraceFile getTraceFile(){
+    public Trace getTrace(){
     	return trace;
     }
 }

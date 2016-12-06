@@ -2,7 +2,7 @@ package edu.gatech.cse6140.tests;
 
 import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.io.InputOutputHandler;
-import edu.gatech.cse6140.io.TraceFile;
+import edu.gatech.cse6140.io.Trace;
 import edu.gatech.cse6140.tsp.TravelingSalesmanTour;
 import edu.gatech.cse6140.tsp.solvers.BranchAndBoundSolver;
 import edu.gatech.cse6140.tsp.solvers.local_search.RandomizedHillClimbingSolver;
@@ -22,7 +22,6 @@ public class RandomizedHillClimbingSolverTest {
                 .setRandomSeed(67)
                 .solve(10, new BranchAndBoundSolver(graph).solve(10));
         
-        TraceFile trace = rhc.getTraceFile();
-        trace.createTraceFile("Roanoke", "RandomizedHC", 10, 67);
+        Trace trace = rhc.getTrace();
     }
 }
