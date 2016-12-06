@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import edu.gatech.cse6140.graph.Graph;
 import edu.gatech.cse6140.graph.Node;
 import edu.gatech.cse6140.io.InputOutputHandler;
 import edu.gatech.cse6140.io.Trace;
@@ -18,8 +19,8 @@ public class SimulatedAnnealingTests {
                 "./data/"
         );
 		ArrayList<Node> nodes = ioHandler.getNodesFromTSPFile("Boston.tsp");
-		SimulatedAnnealingSolver solver = new SimulatedAnnealingSolver(1, nodes);
-		TravelingSalesmanTour tour = solver.solve(10);
+		SimulatedAnnealingSolver solver = new SimulatedAnnealingSolver(new Graph(nodes), 13);
+		TravelingSalesmanTour tour = solver.solve(100);
 		System.out.println(tour);
 		System.out.println(tour.getTourCost());
 		
