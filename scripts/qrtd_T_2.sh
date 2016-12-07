@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd ..
+
+n=10
+
+city=Toronto
+alg=LS2
+
+t=300
+
+for (( i=1; i<=$n; i++ )); do
+    ./runCode.sh -i $city -a $alg -t $t -d
+
+    echo finished $i/$n $city $a
+done
